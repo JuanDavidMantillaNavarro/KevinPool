@@ -241,7 +241,7 @@ GameObject:
   - component: {fileID: 158627403}
   m_Layer: 0
   m_Name: Bola15
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -349,7 +349,7 @@ GameObject:
   - component: {fileID: 218214220}
   m_Layer: 0
   m_Name: Bola3
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -715,7 +715,7 @@ GameObject:
   - component: {fileID: 439804875}
   m_Layer: 0
   m_Name: Bola9
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -823,7 +823,7 @@ GameObject:
   - component: {fileID: 652762541}
   m_Layer: 0
   m_Name: Bola5
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -917,6 +917,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &699164676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 699164678}
+  - component: {fileID: 699164677}
+  m_Layer: 0
+  m_Name: ControladorBolas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &699164677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699164676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a452efff1a38464298ede38ba048552, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masa: 0.17
+  e: 0.7
+  epared: 0.2
+  radio: 2.85
+  friccionFactor: 0.995
+  bolas: []
+--- !u!4 &699164678
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 699164676}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -29.024956, y: -74.46613, z: 25.295275}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &708608952
 GameObject:
   m_ObjectHideFlags: 0
@@ -931,7 +981,7 @@ GameObject:
   - component: {fileID: 708608953}
   m_Layer: 0
   m_Name: Bola13
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1039,7 +1089,7 @@ GameObject:
   - component: {fileID: 714940341}
   m_Layer: 0
   m_Name: Bola8
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1147,7 +1197,7 @@ GameObject:
   - component: {fileID: 811208929}
   m_Layer: 0
   m_Name: Bola2
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1304,7 +1354,7 @@ GameObject:
   - component: {fileID: 1311123339}
   m_Layer: 0
   m_Name: Bola14
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1412,7 +1462,7 @@ GameObject:
   - component: {fileID: 1323152115}
   m_Layer: 0
   m_Name: Bola7
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1520,7 +1570,7 @@ GameObject:
   - component: {fileID: 1693607965}
   m_Layer: 0
   m_Name: Bola10
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1628,7 +1678,7 @@ GameObject:
   - component: {fileID: 1776722681}
   m_Layer: 0
   m_Name: Bola11
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1736,7 +1786,7 @@ GameObject:
   - component: {fileID: 1851011748}
   m_Layer: 0
   m_Name: Bola12
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1844,7 +1894,7 @@ GameObject:
   - component: {fileID: 1885005730}
   m_Layer: 0
   m_Name: Bola4
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1952,7 +2002,7 @@ GameObject:
   - component: {fileID: 1920518625}
   m_Layer: 0
   m_Name: Bola1
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2060,7 +2110,7 @@ GameObject:
   - component: {fileID: 1981396205}
   m_Layer: 0
   m_Name: Bola
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2168,7 +2218,7 @@ GameObject:
   - component: {fileID: 1989215590}
   m_Layer: 0
   m_Name: Bola6
-  m_TagString: Untagged
+  m_TagString: Bola
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2286,3 +2336,4 @@ SceneRoots:
   - {fileID: 708608956}
   - {fileID: 1311123342}
   - {fileID: 158627406}
+  - {fileID: 699164678}

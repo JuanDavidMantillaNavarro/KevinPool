@@ -6,120 +6,140 @@ using System;
 
 public class BolaScript : MonoBehaviour
 {
-    public float masa = 0.170f, yac1, xac1, vac1, yac2, xac2, vac2, e = 0.8f, radio = 0.5f, xaux = 0f, v1x = -30f, v1y = -13f, v1,v2, v1n, v1t, v2n, v2t, ang,ang2, v2x = 2f, v2y = 5f, distancia ,vf1n, vf2n;
-    public GameObject Bola1, Bola2;
+    public float masa = 0.170f, e = 0.7f, epared = 0.2f, radio = ((5.7f) / 2f), friccionFactor = 0.995f;
+    public GameObject[] bolas;  // Arreglo para todas las bolas
+    private Vector3[] velocidades;  // Para almacenar las velocidades de cada bola
 
     // Start is called before the first frame update
     void Start()
     {
-        yac1 = this.transform.position.y;
-        xac1 = this.transform.position.x;
-        vac1 = 0;
+        // Inicializar las bolas y sus velocidades
+        bolas = new GameObject[16]; 
+        velocidades = new Vector3[16]; //velocidades de cada bola
 
+        bolas = GameObject.FindGameObjectsWithTag("Bola");
+
+        // bola blanca se mueve inicialmente
+        velocidades[0] = new Vector3(0.1f, 0, 135f); 
+        for (int i = 1; i < bolas.Length; i++)
+        {
+            velocidades[i] = Vector3.zero; // Las bolas 2 a 16 estan inicialmente quietas
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //ACTUALIZAR POSICION
-        Bola1.transform.position = Bola1.transform.position + new Vector3(v1x * Time.deltaTime, v1y * Time.deltaTime, 0);
-        Bola2.transform.position = Bola2.transform.position + new Vector3(v2x * Time.deltaTime, v2y * Time.deltaTime, 0);
-
-        //Pos en x act
-        xac1 = Bola1.transform.position.x;
-        xac2 = Bola2.transform.position.x;
-        //Pos en y act
-        yac1 = Bola1.transform.position.y;
-        yac2 = Bola2.transform.position.y;
-
-        VerificarColisionParedes();
-        VerificarColisionEntreBolas();
-        
-
-    }
-    private void VerificarColisionParedes()
-    {
-        //Distancia con pared
-        //Paredes en -8.5 y 8.5
-
-        if (yac1 < -4.5 + radio || yac1 > 4.5 - radio)
+        // Actualizar las posiciones de todas las bolas
+        for (int i = 0; i < bolas.Length; i++)
         {
-            v1y = -e * v1y;
-            Debug.Log("choco verticalmente");
-        }
-        else if (xac1 < -8.5 + radio || xac1 > 8.5 - radio)
-        {
-            v1x = -e * v1x;
-            Debug.Log("choco horizontalmente");
+            bolas[i].transform.position += velocidades[i] * Time.deltaTime;
         }
 
-        if (yac2 < -4.5 + radio || yac2 > 4.5 - radio)
+        // Verificar las colisiones con las paredes
+        for (int i = 0; i < bolas.Length; i++)
         {
-            v2y = -e * v2y;
-            Debug.Log("choco verticalmente la bola 2");
+            VerificarColisionParedes(i);
         }
-        else if (xac2 < -8.5 + radio || xac2 > 8.5 - radio)
+
+        // Verificar las colisiones entre todas las bolas
+        for (int i = 0; i < bolas.Length; i++)
         {
-            v2x = -e * v2x;
-            Debug.Log("choco horizontalmente la bola 2");
+            for (int j = i + 1; j < bolas.Length; j++)
+            {
+                VerificarColisionEntreBolas(i, j);
+            }
+        }
+
+        // Aplicar la fricción a todas las bolas
+        for (int i = 0; i < bolas.Length; i++)
+        {
+            Friccion(i);
         }
     }
 
-    void VerificarColisionEntreBolas()
+    private void VerificarColisionParedes(int index)
     {
-        Vector2 pos1 = Bola1.transform.position;
-        Vector2 pos2 = Bola2.transform.position;
+        Vector3 pos = bolas[index].transform.position;
 
-        //Sacar v1 y v2
-        if (v1y < v1x)
+        // Colisión con las paredes
+        if (pos.z < -137 + radio || pos.z > 137 - radio)
         {
-            ang = Mathf.Atan(v1x / v1y);
-            v1 = v1y / (Mathf.Cos(ang));
+            velocidades[index].z = -epared * velocidades[index].z;
         }
-        else
+        if (pos.x < -73 + radio || pos.x > 73 - radio)
         {
-            ang = Mathf.Atan(v1y / v1x);
-            v1 = v1x / (Mathf.Cos(ang));
+            velocidades[index].x = -epared * velocidades[index].x;
         }
+    }
 
-        if (v2y < v2x)
+    private void VerificarColisionEntreBolas(int index1, int index2)
+    {
+        // Trabajamos con posiciones en 3D (pero solo la distancia en X y Z)
+        Vector3 pos1 = bolas[index1].transform.position;
+        Vector3 pos2 = bolas[index2].transform.position;
+
+        // Calcular la distancia en 3D entre las dos bolas
+        float distanciaEntreBolas = Vector3.Distance(pos1, pos2);
+
+        if (distanciaEntreBolas < 2 * radio) // Si hay colisión cuando la distancia es menor que el doble del radio
         {
-            ang2 = Mathf.Atan(v2x / v2y);
-            v2 = v2y / (Mathf.Cos(ang2));
-        }
-        else
-        {
-            ang2 = Mathf.Atan(v2y / v2x);
-            v2 = v2x / (Mathf.Cos(ang2));
-        }
+            Vector3 normal = (pos2 - pos1).normalized; // Se saca la normal
 
-        xaux = Mathf.Abs(xac1 - xac2); //Distancia
+            // Velocidades normales y tangenciales
+            float v1n = Vector3.Dot(velocidades[index1], normal); // Velocidad en la normal
+            float v1t = Vector3.Dot(velocidades[index1], Vector3.Cross(normal, Vector3.up)); // Componente tangencial
+            float v2n = Vector3.Dot(velocidades[index2], normal); // Velocidad en la normal
+            float v2t = Vector3.Dot(velocidades[index2], Vector3.Cross(normal, Vector3.up)); // Componente tangencial
 
-        if (xaux < 2 * radio) // Si hay colisi�n
-        {
-            Vector2 normal = (pos2 - pos1); // se saca la normal
+            // Si las velocidades normales son muy pequeñas, podemos evitar la colisión
+            if (Mathf.Abs(v1n) < 0.001f && Mathf.Abs(v2n) < 0.001f)
+            return;
 
-            v1n = v1 * Mathf.Cos(ang);
-            v1t = v1 * Mathf.Sin(ang);
-            v2n = -v2 * Mathf.Cos(ang2);
-            v2t = v2 * Mathf.Sin(ang2);
-
-
-            //Usando las ecuaciones: v1n + v2n = vf1n + vf2n; y vf2n - vf1n = e(v1n - v2n);
+            // Ecuaciones de colisión elástica
             float aux = v1n + v2n;
-            float aux2 = e*(v1n - v2n);
+            float aux2 = e * (v1n - v2n);
+            float vf1n=0, vf2n=0;
             vf1n = aux - vf2n;
             vf2n = aux2 + vf1n;
 
-            v1x = v1n;
-            v1y = v1t;
-            v2x = v2n;
-            v2y = v2t;
+            // Limitar la velocidad de la bola a un rango más razonable
+            float maxVel = 30f;  // Puedes ajustar este valor según lo que necesites
+            vf1n = Mathf.Clamp(vf1n, -maxVel, maxVel);
+            vf2n = Mathf.Clamp(vf2n, -maxVel, maxVel);
 
-            Vector2 vf1 = new Vector2(vf1n, v1t);
-            Vector2 vf2 = new Vector2(vf2n, v2t);
+            // Ajustar las velocidades para reducir el impacto
+            float amortiguacion = 0.6f; // Factor de amortiguación para moderar el cambio de velocidad
+            vf1n *= amortiguacion;
+            vf2n *= amortiguacion;
 
-
+            // Nuevas velocidades (para X y Z) por producto punto
+            velocidades[index1].x = vf1n * normal.x + v1t * Vector3.Cross(normal, Vector3.up).x;
+            velocidades[index1].z = vf1n * normal.z + v1t * Vector3.Cross(normal, Vector3.up).z;
+            velocidades[index2].x = vf2n * normal.x + v2t * Vector3.Cross(normal, Vector3.up).x;
+            velocidades[index2].z = vf2n * normal.z + v2t * Vector3.Cross(normal, Vector3.up).z;
         }
+    }
+
+    // aplicar la fricción a las bolas por la mesa
+    private void Friccion(int index)
+    {
+        // Si la magnitud de la velocidad es suficientemente baja, podemos considerar que la bola está detenida.
+        if (velocidades[index].magnitude < 0.005f)
+        {
+        velocidades[index] = Vector3.zero; // Detener la bola
+        }
+        else
+        {
+            // Solo aplicar fricción si la bola se esta moviendo
+            if (velocidades[index].magnitude > 0.001f)
+            {
+            velocidades[index] *= friccionFactor; 
+            }
+            // Si la velocidad es demasiado baja, ponerla a cero para evitar que se mueva para el otro lado
+            if (Mathf.Abs(velocidades[index].x) < 0.001f) velocidades[index].x = 0;
+            if (Mathf.Abs(velocidades[index].z) < 0.001f) velocidades[index].z = 0;
+        }
+        
     }
 }
