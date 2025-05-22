@@ -20,7 +20,7 @@ public class BolaScript : MonoBehaviour
     void Start()
     {
         // Inicializar las bolas y sus velocidades
-        bolas = new GameObject[16]; 
+        bolas = new GameObject[16];
         velocidades = new Vector3[16]; //velocidades de cada bola
 
         GameObject[] allBolas = GameObject.FindGameObjectsWithTag("Bola");
@@ -213,19 +213,19 @@ public class BolaScript : MonoBehaviour
         // Si la magnitud de la velocidad es suficientemente baja, podemos considerar que la bola está detenida.
         if (velocidades[index].magnitude < 0.005f)
         {
-        velocidades[index] = Vector3.zero; // Detener la bola
+            velocidades[index] = Vector3.zero; // Detener la bola
         }
         else
         {
             // Solo aplicar fricción si la bola se esta moviendo
             if (velocidades[index].magnitude > 0.001f)
             {
-            velocidades[index] *= friccionFactor; 
+                velocidades[index] *= friccionFactor;
             }
             // Si la velocidad es demasiado baja, ponerla a cero para evitar que se mueva para el otro lado
             if (Mathf.Abs(velocidades[index].x) < 0.001f) velocidades[index].x = 0;
             if (Mathf.Abs(velocidades[index].z) < 0.001f) velocidades[index].z = 0;
         }
-        
+
     }
 }
