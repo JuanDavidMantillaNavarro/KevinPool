@@ -8,9 +8,10 @@ using System;
 
 public class BolaScript : MonoBehaviour
 {
-    public float masa = 0.170f, e = 0.7f, epared = 0.2f, radio = ((5.7f) / 2f), friccionFactor = 0.995f;
-
-
+    public float masa = 0.170f, e = 0.9f, epared = 1f, radio = ((5.7f) / 2f), friccionFactor = 0.995f, vIni = 135f;
+    private float BolaQuieta = 0f;
+    private bool espera = false;
+    
     List<GameObject> ordbolas = new List<GameObject>();  // Arreglo ordenado de las bolas
     public GameObject[] bolas;  // Arreglo para todas las bolas
     private Vector3[] velocidades;  // Para almacenar las velocidades de cada bola
@@ -32,20 +33,20 @@ public class BolaScript : MonoBehaviour
                 break;
             }
         }
-        var ordenadas = allBolas
-           .Where(b => b.name != "Bola" && Regex.IsMatch(b.name, @"^Bola\d+$"))
-           .OrderBy(b =>
-           {
-               string numberPart = Regex.Match(b.name, @"\d+").Value;
-               return int.Parse(numberPart);
-           });
+         var ordenadas = allBolas
+            .Where(b => b.name != "Bola" && Regex.IsMatch(b.name, @"^Bola\d+$"))
+            .OrderBy(b =>
+            {
+                string numberPart = Regex.Match(b.name, @"\d+").Value;
+                return int.Parse(numberPart);
+            });
 
         ordbolas.AddRange(ordenadas);
 
         bolas = ordbolas.ToArray();
 
         // bola blanca se mueve inicialmente
-        velocidades[0] = new Vector3(0.1f, 0, 135f);
+        velocidades[0] = new Vector3(0.1f, 0, vIni); 
         for (int i = 1; i < bolas.Length; i++)
         {
             velocidades[i] = Vector3.zero; // Las bolas 2 a 16 estan inicialmente quietas
@@ -81,6 +82,43 @@ public class BolaScript : MonoBehaviour
         {
             Friccion(i);
         }
+
+        //Cuando la bola blanca se detiene  espera un tiempo y vuelve a moverse a una direccion aleatoria}
+        if (velocidades[0].magnitude < 0.8f)
+        {
+        BolaQuieta += Time.deltaTime;
+
+            if (BolaQuieta >= 0.01f && !espera)
+            {
+                espera = true;
+                StartCoroutine(TacarBola());
+            }
+        }
+        else
+        {
+            BolaQuieta = 0f;
+            espera = false;
+        }
+    }
+
+    private IEnumerator TacarBola()
+    {
+        // Espera un tiempo minimo
+        yield return new WaitForSeconds(0.05f);
+
+        // Escoge un índice aleatorio de una bola distinta a la blanca
+        int bolaAtacar = UnityEngine.Random.Range(1, bolas.Length);
+
+        // tacar bola random en el plano XZ
+        Vector3 direccion = (bolas[bolaAtacar].transform.position - bolas[0].transform.position).normalized;
+
+        float vTaqueo = 400f;
+        velocidades[0] = direccion * vTaqueo;
+
+        BolaQuieta = 0f;
+        espera = false;
+
+        Debug.Log("La Bola Blanca va a Tacar la Bola "+ bolaAtacar);
     }
 
     private void VerificarColisionParedes(int index)
@@ -88,14 +126,31 @@ public class BolaScript : MonoBehaviour
         Vector3 pos = bolas[index].transform.position;
 
         // Colisión con las paredes
-        if (pos.z < -137 + radio || pos.z > 137 - radio)
+        // Rebotar en el eje Z (paredes de largo)
+        if (pos.z < -137 + radio)
         {
-            velocidades[index].z = -epared * velocidades[index].z;
+        velocidades[index].z = -epared * velocidades[index].z;
+        pos.z = -137 + radio; 
         }
-        if (pos.x < -73 + radio || pos.x > 73 - radio)
+        else if (pos.z > 137 - radio)
         {
-            velocidades[index].x = -epared * velocidades[index].x;
+        velocidades[index].z = -epared * velocidades[index].z;
+        pos.z = 137 - radio; 
         }
+
+        // Rebotar en el eje X (paredes de ancho)
+        if (pos.x < -73 + radio)
+        {
+        velocidades[index].x = -epared * velocidades[index].x;
+        pos.x = -73 + radio; 
+        }
+        else if (pos.x > 73 - radio)
+        {
+        velocidades[index].x = -epared * velocidades[index].x;
+        pos.x = 73 - radio; 
+        }
+
+        bolas[index].transform.position = pos;
     }
 
     private void VerificarColisionEntreBolas(int index1, int index2)
@@ -129,12 +184,12 @@ public class BolaScript : MonoBehaviour
             vf2n = aux2 + vf1n;
 
             // Limitar la velocidad de la bola a un rango más razonable
-            float maxVel = 30f;  // Puedes ajustar este valor según lo que necesites
+            float maxVel = 400f;  // Puedes ajustar este valor según lo que necesites
             vf1n = Mathf.Clamp(vf1n, -maxVel, maxVel);
             vf2n = Mathf.Clamp(vf2n, -maxVel, maxVel);
 
             // Ajustar las velocidades para reducir el impacto
-            float amortiguacion = 0.6f; // Factor de amortiguación para moderar el cambio de velocidad
+            float amortiguacion = 0.85f; // Factor de amortiguación para moderar el cambio de velocidad
             vf1n *= amortiguacion;
             vf2n *= amortiguacion;
 
@@ -143,7 +198,7 @@ public class BolaScript : MonoBehaviour
             velocidades[index1].z = vf1n * normal.z + v1t * Vector3.Cross(normal, Vector3.up).z;
             velocidades[index2].x = vf2n * normal.x + v2t * Vector3.Cross(normal, Vector3.up).x;
             velocidades[index2].z = vf2n * normal.z + v2t * Vector3.Cross(normal, Vector3.up).z;
-
+            
             float solapamiento = (2 * radio - distanciaEntreBolas) / 2f;
             Vector3 separacion = normal * solapamiento;
             bolas[index1].transform.position -= separacion;
