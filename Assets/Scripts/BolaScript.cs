@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using System;
 
@@ -7,6 +9,9 @@ using System;
 public class BolaScript : MonoBehaviour
 {
     public float masa = 0.170f, e = 0.7f, epared = 0.2f, radio = ((5.7f) / 2f), friccionFactor = 0.995f;
+
+
+    List<GameObject> ordbolas = new List<GameObject>();  // Arreglo ordenado de las bolas
     public GameObject[] bolas;  // Arreglo para todas las bolas
     private Vector3[] velocidades;  // Para almacenar las velocidades de cada bola
 
@@ -14,13 +19,33 @@ public class BolaScript : MonoBehaviour
     void Start()
     {
         // Inicializar las bolas y sus velocidades
-        bolas = new GameObject[16]; 
+        bolas = new GameObject[16];
         velocidades = new Vector3[16]; //velocidades de cada bola
 
-        bolas = GameObject.FindGameObjectsWithTag("Bola");
+        GameObject[] allBolas = GameObject.FindGameObjectsWithTag("Bola");
+
+        foreach (GameObject bola in allBolas)
+        {
+            if (bola.name == "Bola")
+            {
+                ordbolas.Insert(0, bola);
+                break;
+            }
+        }
+        var ordenadas = allBolas
+           .Where(b => b.name != "Bola" && Regex.IsMatch(b.name, @"^Bola\d+$"))
+           .OrderBy(b =>
+           {
+               string numberPart = Regex.Match(b.name, @"\d+").Value;
+               return int.Parse(numberPart);
+           });
+
+        ordbolas.AddRange(ordenadas);
+
+        bolas = ordbolas.ToArray();
 
         // bola blanca se mueve inicialmente
-        velocidades[0] = new Vector3(0.1f, 0, 135f); 
+        velocidades[0] = new Vector3(0.1f, 0, 135f);
         for (int i = 1; i < bolas.Length; i++)
         {
             velocidades[i] = Vector3.zero; // Las bolas 2 a 16 estan inicialmente quietas
@@ -94,12 +119,12 @@ public class BolaScript : MonoBehaviour
 
             // Si las velocidades normales son muy pequeñas, podemos evitar la colisión
             if (Mathf.Abs(v1n) < 0.001f && Mathf.Abs(v2n) < 0.001f)
-            return;
+                return;
 
             // Ecuaciones de colisión elástica
             float aux = v1n + v2n;
             float aux2 = e * (v1n - v2n);
-            float vf1n=0, vf2n=0;
+            float vf1n = 0, vf2n = 0;
             vf1n = aux - vf2n;
             vf2n = aux2 + vf1n;
 
@@ -118,6 +143,12 @@ public class BolaScript : MonoBehaviour
             velocidades[index1].z = vf1n * normal.z + v1t * Vector3.Cross(normal, Vector3.up).z;
             velocidades[index2].x = vf2n * normal.x + v2t * Vector3.Cross(normal, Vector3.up).x;
             velocidades[index2].z = vf2n * normal.z + v2t * Vector3.Cross(normal, Vector3.up).z;
+
+            float solapamiento = (2 * radio - distanciaEntreBolas) / 2f;
+            Vector3 separacion = normal * solapamiento;
+            bolas[index1].transform.position -= separacion;
+            bolas[index2].transform.position += separacion;
+
         }
     }
 
@@ -127,19 +158,19 @@ public class BolaScript : MonoBehaviour
         // Si la magnitud de la velocidad es suficientemente baja, podemos considerar que la bola está detenida.
         if (velocidades[index].magnitude < 0.005f)
         {
-        velocidades[index] = Vector3.zero; // Detener la bola
+            velocidades[index] = Vector3.zero; // Detener la bola
         }
         else
         {
             // Solo aplicar fricción si la bola se esta moviendo
             if (velocidades[index].magnitude > 0.001f)
             {
-            velocidades[index] *= friccionFactor; 
+                velocidades[index] *= friccionFactor;
             }
             // Si la velocidad es demasiado baja, ponerla a cero para evitar que se mueva para el otro lado
             if (Mathf.Abs(velocidades[index].x) < 0.001f) velocidades[index].x = 0;
             if (Mathf.Abs(velocidades[index].z) < 0.001f) velocidades[index].z = 0;
         }
-        
+
     }
 }
