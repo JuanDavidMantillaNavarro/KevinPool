@@ -7,7 +7,7 @@ public class TransicionEscenasUI : MonoBehaviour
     [Header("Disolver")]
     public CanvasGroup disolverCanvasGroup;
     public float tiempoDisolverEntrada = 3f;
-    public float tiempoAntesDeDisolver = 3f; // Tiempo que dura la portada
+    public float tiempoAntesDeDisolver = 2f; // Tiempo que dura la portada
     public float tiempoDisolverSalida = 3f;
 
     [Header("Nombre de la escena a cargar")]
