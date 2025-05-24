@@ -18,13 +18,18 @@ public class MusicaFondo : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject); // Evita duplicados al volver
+            Destroy(gameObject); // Evita duplicados
         }
     }
 
-    private void Start()
+    void Start()
     {
         StartCoroutine(FadeIn());
+    }
+
+    public void CambiarMusica(AudioClip nuevaMusica)
+    {
+        StartCoroutine(FadeOutAndChange(nuevaMusica));
     }
 
     private System.Collections.IEnumerator FadeIn()
@@ -38,12 +43,7 @@ public class MusicaFondo : MonoBehaviour
         }
     }
 
-    public void FadeOutAndStop()
-    {
-        StartCoroutine(FadeOut());
-    }
-
-    private System.Collections.IEnumerator FadeOut()
+    private System.Collections.IEnumerator FadeOutAndChange(AudioClip nuevaMusica)
     {
         float tiempo = 0f;
         float volumenInicial = audioSource.volume;
@@ -53,6 +53,17 @@ public class MusicaFondo : MonoBehaviour
             audioSource.volume = Mathf.Lerp(volumenInicial, 0f, tiempo / duracionFade);
             yield return null;
         }
-        audioSource.Stop();
+
+        audioSource.clip = nuevaMusica;
+        audioSource.Play();
+
+        // Fade In nueva música
+        tiempo = 0f;
+        while (tiempo < duracionFade)
+        {
+            tiempo += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(0f, volumenObjetivo, tiempo / duracionFade);
+            yield return null;
+        }
     }
 }
