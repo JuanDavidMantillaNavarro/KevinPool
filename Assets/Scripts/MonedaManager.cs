@@ -4,8 +4,8 @@ using System.Collections.Generic;
 public class MonedaManager : MonoBehaviour
 {
     public GameObject monedaPrefab;
-    public Vector3 mesaSize = new Vector3(146, 1, 274); // Tama�o del pa�o
-    public float alturaMoneda = 3.58f; // altura del paño
+    public Vector3 mesaSize = new Vector3(146, 1, 274);
+    public float alturaMoneda = 3.58f;
     public float separacionMinima = 8f;
     public int cantidadMonedas = 15;
 
@@ -27,26 +27,35 @@ public class MonedaManager : MonoBehaviour
 
             if (EsPosicionValida(posicion))
             {
-                GameObject nueva = Instantiate(monedaPrefab, posicion, Quaternion.Euler(90, 0, 0)); // Rotada como moneda vertical
-                nueva.GetComponent<Moneda>().manager = this;
-                monedas.Add(nueva);
+                CrearNuevaMoneda(posicion);
             }
         }
     }
 
-    public void ReemplazarMoneda(GameObject monedaEliminada)
+    public void RegistrarRecoleccion(GameObject moneda)
     {
-        monedas.Remove(monedaEliminada);
+        if (monedas.Contains(moneda))
+        {
+            monedas.Remove(moneda);
+        }
 
+        Destroy(moneda);
+
+        // Generar nueva moneda
         int intentos = 0;
-        Vector3 posicion;
+        Vector3 nuevaPos;
 
         do
         {
-            posicion = ObtenerPosicionAleatoria();
+            nuevaPos = ObtenerPosicionAleatoria();
             intentos++;
-        } while (!EsPosicionValida(posicion) && intentos < 100);
+        } while (!EsPosicionValida(nuevaPos) && intentos < 100);
 
+        CrearNuevaMoneda(nuevaPos);
+    }
+
+    private void CrearNuevaMoneda(Vector3 posicion)
+    {
         GameObject nueva = Instantiate(monedaPrefab, posicion, Quaternion.Euler(90, 0, 0));
         nueva.GetComponent<Moneda>().manager = this;
         monedas.Add(nueva);
