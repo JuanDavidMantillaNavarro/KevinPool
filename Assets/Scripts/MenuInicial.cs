@@ -6,16 +6,17 @@ public class Inicio : MonoBehaviour
 {
     public AudioSource sonidoClick;
 
-    public int indiceEscenaJuego = 1;            // Escena principal del juego
-    public int indiceEscenaSettings = 2;         // Escena de configuración
-    public int indiceEscenaConfirmacion = 3;     // Escena de confirmación de salida
+    public int indiceEscenaInstrucciones = 1;   // ✅ Nueva: escena de instrucciones
+    public int indiceEscenaSettings = 2;
+    public int indiceEscenaConfirmacion = 3;
 
     public void Jugar()
     {
         if (sonidoClick != null)
             sonidoClick.Play();
 
-        StartCoroutine(TransicionConSonido(indiceEscenaJuego));
+        // ✅ Ahora va a la escena de instrucciones
+        StartCoroutine(TransicionConSonido(indiceEscenaInstrucciones));
     }
 
     public void Settings()
@@ -26,18 +27,12 @@ public class Inicio : MonoBehaviour
         StartCoroutine(TransicionConSonido(indiceEscenaSettings));
     }
 
-    public void ConfirmarSalida()
+    public void Salir()
     {
         if (sonidoClick != null)
             sonidoClick.Play();
 
         StartCoroutine(TransicionConSonido(indiceEscenaConfirmacion));
-    }
-
-    public void Salir()
-    {
-        Debug.Log("Salir...");
-        Application.Quit();
     }
 
     private IEnumerator TransicionConSonido(int indiceEscena)
