@@ -1285,9 +1285,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sonidoClick: {fileID: 1533942769}
-  indiceEscenaInstrucciones: 1
-  indiceEscenaSettings: 2
-  indiceEscenaConfirmacion: 3
+  nombreEscenaInstrucciones: instrucciones
+  nombreEscenaSettings: Settings
+  nombreEscenaConfirmacion: ConfirmacionSalida
 --- !u!1 &2047705907
 GameObject:
   m_ObjectHideFlags: 0
