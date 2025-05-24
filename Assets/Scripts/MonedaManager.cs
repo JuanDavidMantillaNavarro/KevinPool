@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using TMPro;
+
 
 public class MonedaManager : MonoBehaviour
 {
@@ -10,10 +13,14 @@ public class MonedaManager : MonoBehaviour
     public int cantidadMonedas = 15;
 
     private List<GameObject> monedas = new List<GameObject>();
+    public TextMeshProUGUI contadorTexto; 
+    private int monedasRecogidas = 0;
+
 
     void Start()
     {
         GenerarMonedasIniciales();
+        ActualizarContadorUI();
     }
 
     void GenerarMonedasIniciales()
@@ -41,6 +48,10 @@ public class MonedaManager : MonoBehaviour
 
         Destroy(moneda);
 
+        // Actualizar contador
+        monedasRecogidas++;
+        ActualizarContadorUI();
+
         // Generar nueva moneda
         int intentos = 0;
         Vector3 nuevaPos;
@@ -53,6 +64,7 @@ public class MonedaManager : MonoBehaviour
 
         CrearNuevaMoneda(nuevaPos);
     }
+
 
     private void CrearNuevaMoneda(Vector3 posicion)
     {
@@ -77,4 +89,13 @@ public class MonedaManager : MonoBehaviour
         }
         return true;
     }
+    
+    private void ActualizarContadorUI()
+    {
+        if (contadorTexto != null)
+        {
+            contadorTexto.text = "Monedas: " + monedasRecogidas;
+        }
+    }
+
 }
