@@ -5,7 +5,7 @@ public class MonedaManager : MonoBehaviour
 {
     public GameObject monedaPrefab;
     public Vector3 mesaSize = new Vector3(146, 1, 274); // Tama�o del pa�o
-    public float alturaMoneda = 8.0f; // M�s alto para que floten
+    public float alturaMoneda = 3.58f; // altura del paño
     public float separacionMinima = 8f;
     public int cantidadMonedas = 15;
 
