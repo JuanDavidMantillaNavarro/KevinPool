@@ -6,17 +6,17 @@ public class Inicio : MonoBehaviour
 {
     public AudioSource sonidoClick;
 
-    public int indiceEscenaInstrucciones = 1;   // ✅ Nueva: escena de instrucciones
-    public int indiceEscenaSettings = 2;
-    public int indiceEscenaConfirmacion = 3;
+    [Header("Nombres exactos de las escenas")]
+    public string nombreEscenaInstrucciones = "instrucciones";
+    public string nombreEscenaSettings = "Settings";
+    public string nombreEscenaConfirmacion = "ConfirmacionSalida";
 
     public void Jugar()
     {
         if (sonidoClick != null)
             sonidoClick.Play();
 
-        // ✅ Ahora va a la escena de instrucciones
-        StartCoroutine(TransicionConSonido(indiceEscenaInstrucciones));
+        StartCoroutine(TransicionConSonido(nombreEscenaInstrucciones));
     }
 
     public void Settings()
@@ -24,7 +24,7 @@ public class Inicio : MonoBehaviour
         if (sonidoClick != null)
             sonidoClick.Play();
 
-        StartCoroutine(TransicionConSonido(indiceEscenaSettings));
+        StartCoroutine(TransicionConSonido(nombreEscenaSettings));
     }
 
     public void Salir()
@@ -32,14 +32,14 @@ public class Inicio : MonoBehaviour
         if (sonidoClick != null)
             sonidoClick.Play();
 
-        StartCoroutine(TransicionConSonido(indiceEscenaConfirmacion));
+        StartCoroutine(TransicionConSonido(nombreEscenaConfirmacion));
     }
 
-    private IEnumerator TransicionConSonido(int indiceEscena)
+    private IEnumerator TransicionConSonido(string nombreEscena)
     {
         if (sonidoClick != null)
             yield return new WaitForSeconds(sonidoClick.clip.length);
 
-        TransicionEscenasUI1.Instance.DisolverSalida(indiceEscena);
+        SceneManager.LoadScene(nombreEscena);
     }
 }
