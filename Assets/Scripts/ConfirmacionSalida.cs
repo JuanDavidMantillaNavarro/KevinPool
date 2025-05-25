@@ -2,42 +2,64 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-
 public class ConfirmacionSalida : MonoBehaviour
 {
     public AudioSource sonidoClick;
-    public int indiceEscenaRegresar = 0; // Índice del menú principal
+    private string escenaAnterior;
+
+    private void Start()
+    {
+        // Obtén la escena anterior guardada, por ejemplo "Inicio" si no existe
+        escenaAnterior = PlayerPrefs.GetString("escenaAnterior", "Inicio"); 
+    }
 
     public void ConfirmarSalida()
     {
         if (sonidoClick != null)
+        {
             sonidoClick.Play();
-
-        StartCoroutine(SalirDespuesDelSonido());
+            StartCoroutine(SalirDespuesDelSonido());
+        }
+        else
+        {
+            Application.Quit();
+        }
     }
 
     public void CancelarSalida()
     {
         if (sonidoClick != null)
+        {
             sonidoClick.Play();
-
-        StartCoroutine(VolverAlMenuDespuesDelSonido());
+            StartCoroutine(VolverDespuesDelSonido());
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(escenaAnterior))
+                SceneManager.LoadScene(escenaAnterior);
+            else
+                SceneManager.LoadScene("Inicio"); // Escena por defecto si no hay valor guardado
+        }
     }
 
     private IEnumerator SalirDespuesDelSonido()
     {
-        if (sonidoClick != null)
-            yield return new WaitForSeconds(sonidoClick.clip.length);
-
+        yield return new WaitWhile(() => sonidoClick.isPlaying);
         Debug.Log("Saliendo del juego...");
         Application.Quit();
     }
 
-    private IEnumerator VolverAlMenuDespuesDelSonido()
+    private IEnumerator VolverDespuesDelSonido()
     {
-        if (sonidoClick != null)
-            yield return new WaitForSeconds(sonidoClick.clip.length);
+        yield return new WaitWhile(() => sonidoClick.isPlaying);
 
-        SceneManager.LoadScene(indiceEscenaRegresar);
+        if (!string.IsNullOrEmpty(escenaAnterior))
+        {
+            SceneManager.LoadScene(escenaAnterior);
+        }
+        else
+        {
+            SceneManager.LoadScene("Inicio"); // Escena por defecto
+        }
     }
 }

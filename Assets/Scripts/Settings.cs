@@ -21,7 +21,10 @@ public class Settings : MonoBehaviour
 
     private void Start()
     {
-        escenaAnterior = PlayerPrefs.GetString("escenaAnterior", "Inicio");
+        Time.timeScale = 1f; // Restablece el tiempo al inicio de Settings
+
+        escenaAnterior = PlayerPrefs.GetString("escenaAnterior", "Inicio"); // Valor por defecto "Inicio"
+        Debug.Log("Escena anterior guardada: " + escenaAnterior);
 
         // Fade de entrada
         fadeCanvasGroup.alpha = 1f;

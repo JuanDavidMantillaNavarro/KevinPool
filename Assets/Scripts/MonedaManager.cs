@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using System;
+
 
 
 public class MonedaManager : MonoBehaviour
@@ -13,14 +15,22 @@ public class MonedaManager : MonoBehaviour
     public int cantidadMonedas = 15;
 
     private List<GameObject> monedas = new List<GameObject>();
-    public TextMeshProUGUI contadorTexto; 
+    public TextMeshProUGUI contadorTexto;
     private int monedasRecogidas = 0;
 
+    public TextMeshProUGUI timerTexto;
+    private float tiempo = 0f;
 
     void Start()
     {
         GenerarMonedasIniciales();
         ActualizarContadorUI();
+    }
+
+    void Update()
+    {
+        tiempo += Time.deltaTime;
+        ActualizarTimerUI();
     }
 
     void GenerarMonedasIniciales()
@@ -75,8 +85,8 @@ public class MonedaManager : MonoBehaviour
 
     private Vector3 ObtenerPosicionAleatoria()
     {
-        float x = Random.Range(-mesaSize.x / 2 + separacionMinima, mesaSize.x / 2 - separacionMinima);
-        float z = Random.Range(-mesaSize.z / 2 + separacionMinima, mesaSize.z / 2 - separacionMinima);
+        float x = UnityEngine.Random.Range(-mesaSize.x / 2 + separacionMinima, mesaSize.x / 2 - separacionMinima);
+        float z = UnityEngine.Random.Range(-mesaSize.z / 2 + separacionMinima, mesaSize.z / 2 - separacionMinima);
         return new Vector3(x, alturaMoneda, z);
     }
 
@@ -89,7 +99,7 @@ public class MonedaManager : MonoBehaviour
         }
         return true;
     }
-    
+
     private void ActualizarContadorUI()
     {
         if (contadorTexto != null)
@@ -97,5 +107,16 @@ public class MonedaManager : MonoBehaviour
             contadorTexto.text = "Monedas: " + monedasRecogidas;
         }
     }
+
+    private void ActualizarTimerUI()
+    {
+        if (timerTexto != null)
+        {
+            TimeSpan tiempoFormateado = TimeSpan.FromSeconds(tiempo);
+            timerTexto.text = tiempoFormateado.ToString(@"mm\:ss");
+        }  
+    }
+
+
 
 }

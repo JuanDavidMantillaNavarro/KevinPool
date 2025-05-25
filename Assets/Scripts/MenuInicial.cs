@@ -21,6 +21,9 @@ public class Inicio : MonoBehaviour
 
     public void Settings()
     {
+        // Guardar la escena actual antes de cambiar a Settings
+            PlayerPrefs.SetString("escenaAnterior", SceneManager.GetActiveScene().name);
+            
         if (sonidoClick != null)
             sonidoClick.Play();
 
